@@ -13,7 +13,7 @@ class LinearRegression:
         m=len(X)
 
         # Create the numpy array where theta and cost are saved
-        theta_history=np.zeros(self.n_steps,self.theta.shape[0])
+        theta_history=np.zeros((self.n_steps,self.theta.shape[0]))
         cost_history=np.zeros(self.n_steps)
 
         # Update the theta for every step
