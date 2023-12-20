@@ -12,7 +12,7 @@ diabetes=diabetes.sample(frac=1).reset_index(drop=True)
 # Divide X and y
 X=diabetes.drop('Outcome',axis=1).values
 y=diabetes['Outcome'].values
-print(X.shape[1])
+
 
 # Split the data in training and test set
 train_size=round(0.8*len(X))
@@ -34,4 +34,3 @@ linear_regression=LinearRegression(1e-1,500,X.shape[1])
 
 cost_hisotry,theta_history=linear_regression.fit_full_batch(X_train_std,y_train)
 y_pred=linear_regression.predict(X_test_std)
-
