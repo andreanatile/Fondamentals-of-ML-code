@@ -8,7 +8,7 @@ class LogisticRegression:
         self.n_steps=n_steps
         self.theta=np.random.rand(n_features)
 
-    def sigmoid(z):
+    def sigmoid(self,z):
         return 1/(1+np.exp(-z))
 
     def fit_full_batch(self,X,y):
@@ -53,7 +53,7 @@ class LogisticRegression:
                 total_error += np.dot(xi.T,error)
             
             # Avereage the error over b and update and store theta
-            self.theta=self.theta-self.learning_rate*total_error/b
+            self.theta=self.theta-(self.learning_rate*total_error*(1/b))
             theta_history[step]=self.theta.T
 
             # Calculate the total cost 
