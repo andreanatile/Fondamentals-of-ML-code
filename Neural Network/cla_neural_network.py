@@ -1,9 +1,7 @@
 # Import necessary libraries
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Import RegressionMetrics class from the regression_metrics module
-from regression_metrics import RegressionMetrics
+from classification_metrics import ClassificationMetrics
 
 # Set a seed for random number generation to ensure reproducibility
 np.random.seed(42)
@@ -21,7 +19,7 @@ def sigmoid_derivative(n):
 
 # Define the NeuralNetwork class with specified parameters
 class NeuralNetwork:
-    # Initialize the neural network with layers, epochs, learning rate, and regularization parameter equal to classification
+    # Initialize the neural network with layers, epochs, learning rate, and regularization parameter
     def __init__(self, layers, epochs=700, alpha=1e-2, lmd=1):
         self.layers = layers
         self.n_layers = len(layers)
@@ -35,8 +33,7 @@ class NeuralNetwork:
         self.loss = []
         self.loss_val = []
 
-    # Initialize weights and biases for each layer randomly equal to classification
-
+    # Initialize weights and biases for each layer randomly
     def init_parameters(self):
         for i in range(1, self.n_layers):
             self.w[i] = np.random.randn(self.layers[i], self.layers[i - 1])
@@ -44,9 +41,9 @@ class NeuralNetwork:
 
     # Perform forward propagation through the neural network
     def forward_propagation(self, X):
-    # Initialize a dictionary to store intermediate values during forward propagation
+        # Initialize a dictionary to store intermediate values during forward propagation
         values = {}
-    # Iterate through all layers of the neural network, excluding the input layer
+        # Iterate through all layers of the neural network, excluding the input layer
         for i in range(1, self.n_layers):
             if i == 1:
                 # Compute the weighted sum for the first layer
@@ -54,52 +51,39 @@ class NeuralNetwork:
             else:
                 # Compute the weighted sum for subsequent layers
                 values["Z" + str(i)] = np.dot(self.w[i], values["A" + str(i - 1)]) + self.b[i]
-            # For the output layer, set A equal to Z
-            if i == (self.n_layers - 1):
 
-                values["A" + str(i)] = values["Z" + str(i)]
-            else:
-                # Apply the sigmoid activation function for hidden layers
-                values["A" + str(i)] = sigmoid(values["Z" + str(i)])
+            # Apply the sigmoid activation function
+            values["A" + str(i)] = sigmoid(values["Z" + str(i)])
 
         return values
 
-    # Compute the cost function with L2 regularization for regression different from clf bc we use the
+    # Compute the cost function with L2 regularization
     def compute_cost(self, values, y):
+        # Get the number of training examples
+        m = y.shape[0]
+
+        # Extract the predicted values from the forward propagation results
         pred = values["A" + str(self.n_layers - 1)]
 
-        # Compute the mean squared error loss
-        cost = np.average((y - pred) ** 2) / 2
+        # Compute the cross-entropy loss
+        cost = -np.average(y.T * np.log(pred) + (1 - y.T) * np.log(1 - pred))
 
         # Compute the L2 regularization term
-        # Initialize the sum of squared weights for regularization
         reg_sum = 0
-
-        # Iterate through all layers (excluding the input layer)
         for i in range(1, self.n_layers):
-            # Sum the squared weights of the current layer
             reg_sum += np.sum(np.square(self.w[i]))
-
-        # Multiply the sum by the regularization parameter (lambda)
-        L2_reg = reg_sum * self.lmd
+        L2_reg = reg_sum * (self.lmd / (2 * m))
 
         # Return the total cost including regularization
         return cost + L2_reg
 
-    # Compute the derivative of the cost function for regression
+    # Compute the derivative of the cost function
     def compute_cost_derivative(self, values, y):
-        # Compute the derivative of the mean squared error loss
-        # Calculate the element-wise difference between predicted values (values) and actual values (y)
-        # This represents the error or residuals in the predictions
-        # ERROR -> IN PY WE CANNOT MAKE OPERATION BETWEEN DICTIONARY(values) AND ARRAY(y)
-        #values['Z']? values['A']?
-        return values - y
+        # Compute the derivative of the cross-entropy loss
+        return -(np.divide(y.T, values) - np.divide(1 - y.T, 1 - values))
 
-    # Perform a single backpropagation step and update parameters for regression
+    # Perform a single backpropagation step and update parameters
     def backpropagation_step(self, values, X, y):
-        # Perform backpropagation to update the parameters (weights and biases) of the neural network
-        # based on the computed gradients and errors.
-
         # Get the number of training examples
         m = y.shape[0]
 
@@ -113,27 +97,20 @@ class NeuralNetwork:
         for i in range(self.n_layers - 1, 0, -1):
             if i == (self.n_layers - 1):
                 # For the output layer, compute the derivative of the cost function
-                #\delta^(L)=a^(L)-y
                 dA = self.compute_cost_derivative(values["A" + str(i)], y)
-                dZ = dA
             else:
                 # For hidden layers, compute the derivative using the chain rule
-                #\delta^(L-1)=(w[L].T)\delta(L).*a(L)(1.a(L))
                 dA = np.dot(self.w[i + 1].T, dZ)
-                dZ = np.multiply(dA, sigmoid_derivative(values["A" + str(i)]))
+
+            # Compute the derivative of the weighted sum
+            dZ = np.multiply(dA, sigmoid_derivative(values["A" + str(i)]))
 
             if i == 1:
                 # Compute the weight and bias updates for the first layer
-
-                params_upd["W" + str(i)] = (1 / m) * (
-                        np.dot(dZ, X) + self.lmd * self.w[i]
-                )
+                params_upd["W" + str(i)] = (1 / m) * (np.dot(dZ, X) + self.lmd * self.w[i])
             else:
                 # Compute the weight and bias updates for subsequent layers
-                # (1/m)+a_j^(l)*\delta_i^(l+1)
-                params_upd["W" + str(i)] = (1 / m) * (
-                        np.dot(dZ, values["A" + str(i - 1)].T) + self.lmd * self.w[i]
-                )
+                params_upd["W" + str(i)] = (1 / m) * (np.dot(dZ, values["A" + str(i - 1)].T) + self.lmd * self.w[i])
 
             # Compute the bias updates
             params_upd["B" + str(i)] = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
@@ -147,7 +124,7 @@ class NeuralNetwork:
             self.w[i] -= self.alpha * upd["W" + str(i)]
             self.b[i] -= self.alpha * upd["B" + str(i)]
 
-    # Train the neural network on the provided regression data
+    # Train the neural network on the provided data
     def fit(self, X_train, y_train, X_val=None, y_val=None):
         self.loss = []
         self.loss_val = []
@@ -159,22 +136,23 @@ class NeuralNetwork:
             grads = self.backpropagation_step(values, X_train, y_train)
             self.update(grads)
 
-            # Compute and store the training loss
+            # Compute and record the training loss
             cost = self.compute_cost(values, y_train)
             self.loss.append(cost)
 
-    # Make predictions on new regression data
+    # Make predictions on new data
     def predict(self, X_test):
         values = self.forward_propagation(X_test)
-        return values["A" + str(self.n_layers - 1)]
+        pred = values["A" + str(self.n_layers - 1)]
+        return np.round(pred)
 
-    # Compute regression performance metrics
+    # Compute classification performance metrics
     def compute_performance(self, X, y):
         pred = self.predict(X)
-        metrics = RegressionMetrics(y, pred[-1])
+        metrics = ClassificationMetrics(y, pred[-1])
         return metrics.compute_errors()
 
-    # Plot the training loss curve for regression
+    # Plot the training loss curve
     def plot_loss(self):
         plt.plot(self.loss)
         plt.xlabel("epochs")
