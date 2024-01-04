@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import RegressionMetrics class from the regression_metrics module
-from regression_metrics import RegressionMetrics
+from Metrics.regression_metrics import RegressionMetrics
 
 # Set a seed for random number generation to ensure reproducibility
 np.random.seed(42)

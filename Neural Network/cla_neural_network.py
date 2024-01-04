@@ -1,7 +1,7 @@
 # Import necessary libraries
 import matplotlib.pyplot as plt
 import numpy as np
-from classification_metrics import ClassificationMetrics
+from Metrics.classification_metrics import ClassificationMetrics
 
 # Set a seed for random number generation to ensure reproducibility
 np.random.seed(42)
