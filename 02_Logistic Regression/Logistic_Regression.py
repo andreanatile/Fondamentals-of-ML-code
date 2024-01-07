@@ -94,4 +94,4 @@ class LogisticRegression:
     
     def predict(self,X):
         z=np.dot(X,self.theta)
-        return self.sigmoid(z)
+        return np.round(self.sigmoid(z))
