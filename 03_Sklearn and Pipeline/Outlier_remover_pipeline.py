@@ -8,7 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator,TransformerMixin
 from sklearn.metrics import accuracy_score,classification_report,confusion_matrix
 from sklearn.linear_model import LogisticRegression
-np.random.seed(43)
+np.random.seed(42)
 
 
 class OutlierRemover(BaseEstimator,TransformerMixin):
@@ -84,7 +84,7 @@ numeric_feature=list(range(X.shape[1]))
 # imputer fill any remaining missing values with the mean strategy
 numeric_transform=Pipeline(steps=[
     ('outlier remover',OutlierRemover()),
-    ('imputer',SimpleImputer()),
+    ('imputer',SimpleImputer(strategy='mean')),
     ('scaler',RobustScaler())
 ])
 
