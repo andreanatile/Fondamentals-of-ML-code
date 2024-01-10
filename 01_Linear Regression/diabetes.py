@@ -31,7 +31,7 @@ X_train_std=(X_train-mean)/std
 X_test_std=(X_test-mean)/std
 
 # fit the linear regression and predict
-linear_regression=LinearRegression(1e-1,500,X.shape[1])
+linear_regression=LinearRegression(n_steps=700,n_features=X.shape[1],learning_rate=1e-2)
 
 cost_hisotry,theta_history=linear_regression.fit_full_batch(X_train_std,y_train)
 y_pred=linear_regression.predict(X_test_std)
