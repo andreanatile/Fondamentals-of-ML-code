@@ -36,6 +36,8 @@ class NeuralNetwork:
     # Initialize weights and biases for each layer randomly
     def init_parameters(self):
         for i in range(1, self.n_layers):
+            #w=> S_(j+1) X S_j
+            #b=> S_(j+1) X 1
             self.w[i] = np.random.randn(self.layers[i], self.layers[i - 1])
             self.b[i] = np.ones((self.layers[i], 1))
 
@@ -47,12 +49,14 @@ class NeuralNetwork:
         for i in range(1, self.n_layers):
             if i == 1:
                 # Compute the weighted sum for the first layer
+                #values['Z'+str(i)] => layers[i] X m
                 values["Z" + str(i)] = np.dot(self.w[i], X.T) + self.b[i]
             else:
                 # Compute the weighted sum for subsequent layers
                 values["Z" + str(i)] = np.dot(self.w[i], values["A" + str(i - 1)]) + self.b[i]
 
             # Apply the sigmoid activation function
+            # values['A'+str(i)] => layers[i] X m
             values["A" + str(i)] = sigmoid(values["Z" + str(i)])
 
         return values
@@ -97,22 +101,26 @@ class NeuralNetwork:
         for i in range(self.n_layers - 1, 0, -1):
             if i == (self.n_layers - 1):
                 # For the output layer, compute the derivative of the cost function
+                # dA => layers[i] X m
                 dA = self.compute_cost_derivative(values["A" + str(i)], y)
             else:
                 # For hidden layers, compute the derivative using the chain rule
                 dA = np.dot(self.w[i + 1].T, dZ)
 
             # Compute the derivative of the weighted sum
+            # dZ => layers[i] X m
             dZ = np.multiply(dA, sigmoid_derivative(values["A" + str(i)]))
 
             if i == 1:
                 # Compute the weight and bias updates for the first layer
+                # params_upd["W" + str(i)] => layers[i] X layers[i-1]
                 params_upd["W" + str(i)] = (1 / m) * (np.dot(dZ, X) + self.lmd * self.w[i])
             else:
                 # Compute the weight and bias updates for subsequent layers
                 params_upd["W" + str(i)] = (1 / m) * (np.dot(dZ, values["A" + str(i - 1)].T) + self.lmd * self.w[i])
 
             # Compute the bias updates
+            #params_upd["B" + str(i)] layers[i] X 1
             params_upd["B" + str(i)] = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
         # Return the computed parameter updates
