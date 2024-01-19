@@ -1,3 +1,6 @@
 - do the SVM
 - do the torch
 - polynomial regression
+- linear and logistic regression with regularization
+- metrics
+- add bias
