@@ -36,7 +36,7 @@ class NeuralNetwork:
     # Initialize weights and biases for each layer randomly
     def init_parameters(self):
         for i in range(1, self.n_layers):
-            #w=> S_(j+1) X S_j
+            #w=> S_(j+1) X S_j layers[i]xlayers[i-1]
             #b=> S_(j+1) X 1
             self.w[i] = np.random.randn(self.layers[i], self.layers[i - 1])
             self.b[i] = np.ones((self.layers[i], 1))
