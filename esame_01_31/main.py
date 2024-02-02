@@ -81,7 +81,10 @@ grid.fit(X_train_scaled,y_train)
 best_estimator=grid.best_estimator_
 y_pred=best_estimator.predict(X_test_scaled)
 
+conf_matrix=confusion_matrix(y_test,y_pred)
+
 print(f'Best params: \n {grid.best_params_}')
 print(f'Accuracy score: \n {accuracy_score(y_test,y_pred)}')
-print(f'Confusion matrix: \n {confusion_matrix(y_test,y_pred)}')
+print(f'Confusion matrix: \n {conf_matrix}')
+print(f'True positive: {conf_matrix[0][0]}')
 
