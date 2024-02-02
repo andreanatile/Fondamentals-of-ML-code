@@ -1,0 +1,11 @@
+Il dataset alzhaimer è formato da categorical and numerical values.
+Check if there are any missing and null values.
+Remove duplicate
+
+Using get dummies for 'm/f','group'
+
+Scale feature with z score normalization
+build a Neural network using pytorch with 2 hidden layer 8 and 4 neuron, for
+classifing alzhaimer patients.
+
+Valuete the best hyperparameters and print the vector of true positivie....
