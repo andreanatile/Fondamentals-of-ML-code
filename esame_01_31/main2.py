@@ -65,11 +65,6 @@ scaler=StandardScaler()
 X_train_std=scaler.fit_transform(X_train)
 X_test_std=scaler.transform(X_test)
 
-input_size=X.shape[1]
-hidden_size1=8
-hidden_size2=4
-output_size=1
-
 class SimpleNN_1(nn.Module):
     def __init__(self, input_size, hidden_size1,hidden_size2, output_size):
         super(SimpleNN_1, self).__init__() # SimpleNN is a sub-class of nn.Module
