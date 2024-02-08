@@ -109,6 +109,7 @@ y_test= torch.from_numpy(y_test).float().to(device)
 
 
 epochs = 3000
+conf=None
 for epoch in range(epochs):
   model.train() # we just inform the model that we are training it.
   outputs = model(X_train_std) # we obtain the predictions on training set
@@ -142,5 +143,10 @@ for epoch in range(epochs):
     # 2. Caculate loss/accuracy
 
 
-  if (epoch + 1) % 20 == 0:
+    if (epoch + 1) % 20 == 0:
         print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%")
+    
+        
+      
+conf=confusion_matrix(y_test.numpy(),test_outputs.numpy())
+print(conf)

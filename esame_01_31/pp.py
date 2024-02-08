@@ -14,8 +14,7 @@ dataset=pd.read_csv('esame_01_31/alzheimer.csv')
 dataset.dropna()
 dataset.drop_duplicates()
 
-print(dataset.columns)
-categorical_feature=['Outcome']
+categorical_feature=['Group', 'M/F']
 
 # Remove outlier from numerical feature
 factor=1.5
@@ -35,8 +34,10 @@ for col in dataset.columns:
         X[lower_mask|upper_mask]=np.nan
         dataset[col]=X
         
-X=dataset.drop('Outcome',axis=1).values
-y=dataset['Outcome'].values
+dataset=pd.get_dummies(dataset,columns=categorical_feature)
+
+X=dataset.drop('Group_Demented',axis=1).values
+y=dataset['Group_Demented'].values
 
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
 
@@ -92,7 +93,7 @@ X_test_std=torch.from_numpy(X_test_std).float().to(device)
 y_train=torch.from_numpy(y_train).float().to(device)
 y_test=torch.from_numpy(y_test).float().to(device)
 
-model=NN(input_size,hidden_size1,hidden_size2,output_size)
+model=NN(input_size,hidden_size1,hidden_size2,output_size).to(device)
 epochs=3000
 param={}
 confusion_dict={}
