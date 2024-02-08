@@ -12,6 +12,7 @@ dataset=pd.read_csv('esame_01_31/alzheimer.csv')
 categorical_feature=['Group', 'M/F']
 factor=1.5
 dataset.dropna()
+dataset.drop_duplicates()
 for col in dataset.columns:
     if col not in categorical_feature:
         X=dataset[col].values.astype('float')
